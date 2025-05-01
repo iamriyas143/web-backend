@@ -22,7 +22,7 @@ FILES = {
     },
     "xyz456": {
         "token": "abc123xyz123",
-        "url": "https://images.app.goo.gl/9J2h3k8TbjtS72eh6"
+        "url": "https://youtu.be/a3Ue-LN5B9U?si=lQel_ypvIkbDuG2u"
     }
 }
 
