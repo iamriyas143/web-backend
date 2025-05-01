@@ -8,7 +8,7 @@ app = FastAPI()
 # Allow requests from your frontend's domain
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://your-frontend-site.netlify.app"],  # replace with your actual frontend URL
+    allow_origins=["https://file.download1.netlify.app"],  # replace with your actual frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -17,12 +17,12 @@ app.add_middleware(
 # File links
 FILES = {
     "abc123": {
-        "token": "securetoken",
-        "url": "https://files.com/file1.txt"
+        "token": "xyz123abc123",
+        "url": "https://images.app.goo.gl/V9J1jjiqLmMASrP89"
     },
     "xyz456": {
-        "token": "anotherToken",
-        "url": "https://drive.google.com/uc?id=abc123&export=download"
+        "token": "abc123xyz123",
+        "url": "https://images.app.goo.gl/9J2h3k8TbjtS72eh6"
     }
 }
 
