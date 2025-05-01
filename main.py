@@ -1,11 +1,21 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
+from fastapi import HTTPException
 
 app = FastAPI()
 
-# Predefined file links with hashed URLs and tokens
+# Allow requests from your frontend's domain
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://your-frontend-site.netlify.app"],  # replace with your actual frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# File links
 FILES = {
-    # Example: sha256("https://files.com/file1.txt")
     "abc123": {
         "token": "securetoken",
         "url": "https://files.com/file1.txt"
