@@ -6,8 +6,8 @@ app = Flask(__name__)
 CORS(app)  # Allow Netlify frontend
 
 # 🔧 Replace with your bot token and chat ID
-BOT_TOKEN = '123456789:ABCdEfGhIjKLMNOPqrSTUvWXyz'
-CHAT_ID = '123456789'
+BOT_TOKEN = '7442398419:AAEtB9OW2JWt4np9HUoCVoNR5ACRMmEoD1o'
+CHAT_ID = '5538244138'
 
 def send_to_telegram(message):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
