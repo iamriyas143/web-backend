@@ -1,8 +1,9 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import datetime
 
 app = Flask(__name__)
-CORS(app)  # Allow CORS from Netlify
+CORS(app)
 
 @app.route("/location", methods=["POST"])
 def receive_location():
@@ -15,14 +16,21 @@ def receive_location():
     timestamp = data.get("timestamp")
     user_agent = data.get("userAgent")
 
-    log_entry = f"[{timestamp}] Location: {latitude}, {longitude} | UA: {user_agent}\n"
+    # Extract real IP (handle proxy)
+    ip_address = request.headers.get("X-Forwarded-For", request.remote_addr)
+
+    log_entry = (
+        f"[{timestamp}] IP: {ip_address} | Location: {latitude}, {longitude} | "
+        f"UA: {user_agent}\n"
+    )
+
     print(log_entry)
 
-    # Optional: Save to file
+    # Save to file
     with open("locations.log", "a") as f:
         f.write(log_entry)
 
-    return jsonify({"status": "Location received"}), 200
+    return jsonify({"status": "Location and IP received"}), 200
 
 @app.route("/")
 def home():
